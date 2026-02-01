@@ -161,6 +161,11 @@ window.addEventListener('touchend', () => {
 // Click for Super (Desktop)
 superBtn.addEventListener('click', activateSuper);
 
+// Keyboard Input (Desktop)
+const keys = {};
+window.addEventListener('keydown', e => keys[e.key] = true);
+window.addEventListener('keyup', e => keys[e.key] = false);
+
 // Entities
 const bullets = [];
 const enemies = [];
@@ -266,7 +271,14 @@ function update() {
     if (joystick.active) {
         player.x += joystick.dx * player.speed;
         player.y += joystick.dy * player.speed;
+    } else {
+        // Keyboard Fallback
+        if (keys['w'] || keys['ArrowUp']) player.y -= player.speed;
+        if (keys['s'] || keys['ArrowDown']) player.y += player.speed;
+        if (keys['a'] || keys['ArrowLeft']) player.x -= player.speed;
+        if (keys['d'] || keys['ArrowRight']) player.x += player.speed;
     }
+    
     player.x = Math.max(player.size, Math.min(canvas.width - player.size, player.x));
     player.y = Math.max(player.size, Math.min(canvas.height - player.size, player.y));
 
