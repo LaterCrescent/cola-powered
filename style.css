@@ -1,0 +1,98 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #222;
+    touch-action: none;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+}
+
+#ui-layer {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    pointer-events: none;
+    width: 90%;
+    z-index: 10;
+}
+
+#cola-meter {
+    margin-top: 10px;
+    width: 200px;
+    height: 20px;
+    border: 2px solid white;
+    background: rgba(0,0,0,0.5);
+}
+
+#cola-fill {
+    width: 100%;
+    height: 100%;
+    background-color: #00ffff;
+    transition: width 0.2s;
+}
+
+#super-btn {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    background: radial-gradient(circle, #ff0000, #990000);
+    color: yellow;
+    border: 3px solid yellow;
+    padding: 15px 30px;
+    font-size: 24px;
+    border-radius: 50px;
+    pointer-events: auto;
+    display: none;
+    animation: pulse 0.5s infinite alternate;
+    box-shadow: 0 0 20px #ff0000;
+}
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
+}
+
+#joystick-zone {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 120px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: none;
+}
+
+#game-over-screen {
+    display: none; /* HIDDEN BY DEFAULT */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+#game-over-screen button {
+    padding: 20px 40px;
+    font-size: 24px;
+    background: #00ffff;
+    border: none;
+    border-radius: 10px;
+    margin-top: 20px;
+    cursor: pointer;
+}
