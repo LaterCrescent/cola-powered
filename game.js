@@ -4,11 +4,25 @@ const superBtn = document.getElementById('super-btn');
 const colaFill = document.getElementById('cola-fill');
 const scoreEl = document.getElementById('score');
 
+// Game State (Moved to top)
+let score = 0;
+let xp = 0;
+let level = 1;
+let nextLevelXp = 50; 
+let colaEnergy = 100;
+let superCharge = 0; 
+let gameOver = false;
+let gamePaused = false;
+
 window.forceDeath = function() {
+    console.log("DIE BUTTON CLICKED");
     colaEnergy = -100;
     gameOver = true;
     document.body.style.backgroundColor = 'purple';
-    document.getElementById('game-over-screen').style.display = 'flex';
+    const s = document.getElementById('game-over-screen');
+    s.style.display = 'flex';
+    s.style.zIndex = '999999';
+    document.getElementById('final-score').innerText = "SCORE: " + score;
 };
 
 // --- ASSET GENERATION ---
@@ -61,16 +75,6 @@ function playSound(type) {
         osc.start(now); osc.stop(now + 0.3);
     }
 }
-
-// Game State
-let score = 0;
-let xp = 0;
-let level = 1;
-let nextLevelXp = 50; // Fast first level
-let colaEnergy = 100;
-let superCharge = 0; 
-let gameOver = false;
-let gamePaused = false;
 
 // Player Stats
 const stats = {
