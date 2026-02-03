@@ -226,6 +226,7 @@ setInterval(() => {
         }
     }
     colaFill.style.width = Math.max(0, colaEnergy) + '%';
+    document.getElementById('debug-val').innerText = "E: " + Math.floor(colaEnergy) + " | XP: " + xp;
 }, 200);
 
 // Shooting
