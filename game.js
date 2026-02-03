@@ -182,6 +182,18 @@ function applyUpgrade(opt) {
     // loop is already running, just unpaused
 }
 
+// Watchdog for Game Over
+setInterval(() => {
+    if (colaEnergy <= 0 && !gameOver) {
+        console.log("WATCHDOG TRIGGERED");
+        gameOver = true;
+        document.body.style.backgroundColor = 'blue'; // Visual Debug 2
+        document.getElementById('game-over-screen').style.display = 'flex';
+        document.getElementById('game-over-screen').style.zIndex = '99999';
+        document.getElementById('final-score').innerText = "SCORE: " + score;
+    }
+}, 100);
+
 // Spawners
 let bossActive = false;
 setInterval(() => {
