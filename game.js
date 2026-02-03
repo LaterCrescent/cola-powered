@@ -179,7 +179,7 @@ function applyUpgrade(opt) {
     
     gamePaused = false;
     document.getElementById('upgrade-screen').style.display = 'none';
-    // REMOVED: requestAnimationFrame(loop); <--- THIS WAS THE BUG!
+    requestAnimationFrame(loop);
 }
 
 // Spawners
@@ -215,9 +215,14 @@ setInterval(() => {
     if (colaEnergy <= 0) {
         gameOver = true;
         const goScreen = document.getElementById('game-over-screen');
-        goScreen.style.display = 'flex';
-        goScreen.style.zIndex = '9999'; // Force it to top
-        document.getElementById('final-score').innerText = "SCORE: " + score;
+        if (goScreen) {
+            goScreen.style.display = 'flex';
+            goScreen.style.zIndex = '9999'; // Force it to top
+            document.getElementById('final-score').innerText = "SCORE: " + score;
+        } else {
+            alert("GAME OVER! Score: " + score);
+            location.reload();
+        }
     }
     colaFill.style.width = Math.max(0, colaEnergy) + '%';
 }, 200);
@@ -247,13 +252,9 @@ setInterval(() => {
         }
         playSound('shoot');
     }
-}, stats.fireRate); // Use dynamic fireRate but setInterval doesn't update dynamically without clear. 
-// Fix: We should use a timeout loop for dynamic fire rate, but for now simple restart is tricky. 
-// Hack: We'll stick to 300ms base and fire multiple bullets instead for fire rate, OR just accept static rate.
-// Better Hack: Move shooting to update loop with a timer.
+}, stats.fireRate); 
 
 let shootTimer = 0;
-// We'll move shooting logic to update()
 
 // Update Loop
 function update() {
@@ -263,7 +264,6 @@ function update() {
     shootTimer++;
     if (shootTimer >= stats.fireRate / 16) { // Approx frame conversion
         shootTimer = 0;
-        // ... (Repeat shooting logic) ...
         let closest = null; let minDist = Infinity;
         enemies.forEach(e => {
             const dist = Math.hypot(e.x - player.x, e.y - player.y);
@@ -330,9 +330,14 @@ function update() {
             if (colaEnergy <= 0) {
                 gameOver = true;
                 const goScreen = document.getElementById('game-over-screen');
-                goScreen.style.display = 'flex';
-                goScreen.style.zIndex = '9999';
-                document.getElementById('final-score').innerText = "SCORE: " + score;
+                if (goScreen) {
+                    goScreen.style.display = 'flex';
+                    goScreen.style.zIndex = '9999';
+                    document.getElementById('final-score').innerText = "SCORE: " + score;
+                } else {
+                    alert("GAME OVER! Score: " + score);
+                    location.reload();
+                }
             }
             continue;
         }
