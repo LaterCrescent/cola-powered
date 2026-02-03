@@ -179,7 +179,7 @@ function applyUpgrade(opt) {
     
     gamePaused = false;
     document.getElementById('upgrade-screen').style.display = 'none';
-    requestAnimationFrame(loop);
+    // REMOVED: requestAnimationFrame(loop); <--- THIS WAS THE BUG!
 }
 
 // Spawners
