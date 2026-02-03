@@ -179,7 +179,7 @@ function applyUpgrade(opt) {
     
     gamePaused = false;
     document.getElementById('upgrade-screen').style.display = 'none';
-    requestAnimationFrame(loop);
+    // loop is already running, just unpaused
 }
 
 // Spawners
@@ -214,6 +214,7 @@ setInterval(() => {
     colaEnergy -= 1; 
     if (colaEnergy <= 0) {
         gameOver = true;
+        document.body.style.backgroundColor = 'red'; // Visual Debug
         const goScreen = document.getElementById('game-over-screen');
         if (goScreen) {
             goScreen.style.display = 'flex';
