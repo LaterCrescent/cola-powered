@@ -214,7 +214,9 @@ setInterval(() => {
     colaEnergy -= 1; 
     if (colaEnergy <= 0) {
         gameOver = true;
-        document.getElementById('game-over-screen').style.display = 'flex';
+        const goScreen = document.getElementById('game-over-screen');
+        goScreen.style.display = 'flex';
+        goScreen.style.zIndex = '9999'; // Force it to top
         document.getElementById('final-score').innerText = "SCORE: " + score;
     }
     colaFill.style.width = Math.max(0, colaEnergy) + '%';
@@ -327,7 +329,9 @@ function update() {
             playSound('hit');
             if (colaEnergy <= 0) {
                 gameOver = true;
-                document.getElementById('game-over-screen').style.display = 'flex';
+                const goScreen = document.getElementById('game-over-screen');
+                goScreen.style.display = 'flex';
+                goScreen.style.zIndex = '9999';
                 document.getElementById('final-score').innerText = "SCORE: " + score;
             }
             continue;
