@@ -4,6 +4,13 @@ const superBtn = document.getElementById('super-btn');
 const colaFill = document.getElementById('cola-fill');
 const scoreEl = document.getElementById('score');
 
+window.forceDeath = function() {
+    colaEnergy = -100;
+    gameOver = true;
+    document.body.style.backgroundColor = 'purple';
+    document.getElementById('game-over-screen').style.display = 'flex';
+};
+
 // --- ASSET GENERATION ---
 function createSprite(color, type) {
     const c = document.createElement('canvas');
@@ -184,7 +191,7 @@ function applyUpgrade(opt) {
 
 // Watchdog for Game Over
 setInterval(() => {
-    if (colaEnergy <= 0 && !gameOver) {
+    if (colaEnergy < 1 && !gameOver) { // Changed to < 1
         console.log("WATCHDOG TRIGGERED");
         gameOver = true;
         document.body.style.backgroundColor = 'blue'; // Visual Debug 2
