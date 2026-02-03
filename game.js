@@ -33,20 +33,24 @@ function createSprite(color, type) {
         x.fillStyle = '#550000'; // Legs
         x.fillRect(4, 28, 6, 4);
         x.fillRect(22, 28, 6, 4);
-    } else if (type === 'cola') {
-        // Bottle
-        x.fillStyle = '#884400'; // Liquid
-        x.fillRect(10, 8, 12, 18);
-        x.fillStyle = '#ccffff'; // Glass Shine
-        x.fillRect(12, 10, 2, 10);
-        x.fillStyle = '#cccccc'; // Cap
-        x.fillRect(10, 6, 12, 2);
+    } else if (type === 'boss') {
+        // Giant Robot
+        x.fillStyle = '#aa0000';
+        x.fillRect(0, 0, 64, 64);
+        x.fillStyle = '#ff0000'; // Eyes
+        x.fillRect(10, 10, 20, 10);
+        x.fillRect(34, 10, 20, 10);
+        x.fillStyle = '#ffff00'; // Core
+        x.fillRect(20, 30, 24, 24);
+        x.fillStyle = '#550000'; // Teeth
+        x.fillRect(10, 54, 44, 5);
     }
     return c;
 }
 
 const spritePlayer = createSprite(null, 'player');
 const spriteEnemy = createSprite(null, 'enemy');
+const spriteBoss = createSprite(null, 'boss');
 const spriteCola = createSprite(null, 'cola');
 
 // --- AUDIO ENGINE (Oscillators) ---
@@ -204,8 +208,29 @@ function activateSuper() {
 }
 
 // Spawners
+let bossActive = false;
+
 setInterval(() => {
     if (gameOver) return;
+    
+    // Check Boss Spawn (Every 500 points)
+    if (!bossActive && score > 0 && score % 500 === 0) {
+        bossActive = true;
+        enemies.push({
+            x: canvas.width / 2,
+            y: -100,
+            size: 32, // Radius
+            speed: 1,
+            hp: 20,
+            type: 'boss'
+        });
+        // Clear smaller enemies for the duel
+        enemies.forEach((e, i) => { if (e.type !== 'boss') enemies.splice(i, 1); });
+        return;
+    }
+
+    if (bossActive) return; // Don't spawn minions during boss fight
+
     const side = Math.floor(Math.random() * 4);
     let ex, ey;
     switch(side) {
@@ -214,7 +239,7 @@ setInterval(() => {
         case 2: ex = Math.random() * canvas.width; ey = canvas.height + 20; break;
         case 3: ex = -20; ey = Math.random() * canvas.height; break;
     }
-    enemies.push({ x: ex, y: ey, size: 15, speed: 2 + (score/500) });
+    enemies.push({ x: ex, y: ey, size: 15, speed: 2 + (score/500), hp: 1, type: 'minion' });
 }, 800);
 
 // Cola Spawner
@@ -329,13 +354,12 @@ function update() {
         // Hit Player
         const distPlayer = Math.hypot(e.x - player.x, e.y - player.y);
         if (distPlayer < player.size + e.size) {
-            colaEnergy -= 20; 
+            colaEnergy -= (e.type === 'boss' ? 50 : 20); 
             spawnExplosion(player.x, player.y, '#00ccff');
-            enemies.splice(i, 1);
+            if (e.type !== 'boss') enemies.splice(i, 1); // Boss doesn't die on touch
             playSound('hit');
             if (colaEnergy <= 0) {
                 gameOver = true;
-                // Force update immediately to show screen
                 document.getElementById('game-over-screen').style.display = 'flex';
                 document.getElementById('final-score').innerText = "SCORE: " + score;
             }
@@ -348,11 +372,24 @@ function update() {
             const distBullet = Math.hypot(e.x - b.x, e.y - b.y);
             if (distBullet < e.size + 5) {
                 spawnExplosion(e.x, e.y, '#ff4444');
-                enemies.splice(i, 1);
                 bullets.splice(j, 1);
-                score += 10;
+                
+                // Damage
+                e.hp--;
+                if (e.hp <= 0) {
+                    enemies.splice(i, 1);
+                    score += (e.type === 'boss' ? 1000 : 10);
+                    if (e.type === 'boss') {
+                        bossActive = false;
+                        spawnExplosion(e.x, e.y, '#ffff00'); // Big boom
+                        spawnExplosion(e.x+10, e.y+10, '#ffff00');
+                        spawnExplosion(e.x-10, e.y-10, '#ffff00');
+                    }
+                } else {
+                    playSound('hit'); // Hit sound but no death
+                }
+                
                 scoreEl.innerText = "SCORE: " + score;
-                playSound('hit');
                 break;
             }
         }
@@ -401,7 +438,11 @@ function draw() {
 
     // Enemies
     enemies.forEach(e => {
-        ctx.drawImage(spriteEnemy, e.x - e.size, e.y - e.size, e.size*2, e.size*2);
+        if (e.type === 'boss') {
+            ctx.drawImage(spriteBoss, e.x - e.size, e.y - e.size, 64, 64);
+        } else {
+            ctx.drawImage(spriteEnemy, e.x - e.size, e.y - e.size, e.size*2, e.size*2);
+        }
     });
     
     // Player
